@@ -1,0 +1,145 @@
+<html>
+<head>
+</head>
+<body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="ExcelFormattedGISTEMPDataJS.js"></script>
+<script src="https://rawgithub.com/laff/technical-indicators/master/technical-indicators.src.js"></script>
+<div id="container" style="min-width: 500px; height: 600px; margin: 0 auto"></div>
+<input type="button" id="unCheckAll" value="Unselect All"/>
+<input type="button" id="animate" value="Animate" />
+<script>
+ var multiYearMonthWiseData = [];
+   var monthWiseData = [];
+   var categories = [];
+ data.forEach(function myFunction(item, index) {
+   var seriesData = {};
+   seriesData.name = item.Year;
+   monthWiseData.push({name: item.Year+"/01/01", y :item.Jan });
+   monthWiseData.push({name: item.Year+"/02/01", y :item.Feb });
+   monthWiseData.push({name: item.Year+"/03/01", y :item.Mar });
+   monthWiseData.push({name: item.Year+"/04/01", y :item.Apr });
+   monthWiseData.push({name: item.Year+"/05/01", y :item.May });
+   monthWiseData.push({name: item.Year+"/06/01", y :item.Jun });
+   monthWiseData.push({name: item.Year+"/07/01", y :item.Jul });
+   monthWiseData.push({name: item.Year+"/08/01", y :item.Aug });
+   monthWiseData.push({name: item.Year+"/09/01", y :item.Sep });
+   monthWiseData.push({name: item.Year+"/10/01", y :item.Oct });
+   monthWiseData.push({name: item.Year+"/11/01", y :item.Nov });
+   monthWiseData.push({name: item.Year+"/12/01", y :item.Dec });
+   categories.push(item.Year+"/12/01"); 
+});  
+$(document).ready(function () {
+   var chart =  $('#container').highcharts({
+           chart:{
+                events: {
+                    load: function () {
+                        if (!window.isComparing) {
+                            this.setTitle(null, {
+                                text: ''
+                            });
+                        }
+                    }
+                },
+                zoomType: 'x'
+            },
+        title: {
+            text: 'Monthly Average Temperature'
+        },
+        rangeSelector: {
+                selected:1 
+        },
+        yAxis: [{
+            title: {
+              text: 'Temperature(F)'
+            },
+  		height: 200,
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+         {
+                title: {
+                    text: 'MACD'
+                },
+                top: 300,
+                height: 200,
+                offset: 0,
+                lineWidth: 2
+            }
+	],
+        xAxis: {
+               categories: categories,
+        },
+        plotOptions:{
+                series:{
+                    turboThreshold:60000//larger threshold or set to 0 to disable
+                }
+        },
+        series: [ {
+            data : monthWiseData,
+            dataLength : monthWiseData.length,
+            id: 'primary',
+            tooltip: {
+                    valueDecimals: 1,
+                    valueSuffix: 'C'
+            }
+        },{
+                name: '12-month SMA',
+                yAxis: 1,
+                linkedTo: 'primary',
+                showInLegend: true,
+                type: 'trendline',
+                algorithm: 'SMA',
+                periods: 12
+            }, {
+                name: 'Decade SMA',
+                yAxis: 1,
+                linkedTo: 'primary',
+                showInLegend: true,
+                type: 'trendline',
+                algorithm: 'SMA',
+                periods: 120
+            },{
+                name : 'Trend line',
+                linkedTo: 'primary',
+                yAxis: 1,
+                showInLegend: true,
+                type: 'trendline',
+                algorithm: 'linear'
+
+            }
+            ] 
+    });
+});
+
+$('#unCheckAll').click(function(){
+        var chart = $('#container').highcharts();
+        var series = chart.series;
+        for(i=0; i < chart.series.length; i++) {
+            series[i].setVisible(false, false);
+        }
+        chart.redraw();
+});
+
+$('#animate').click(function(){
+        var chart = $('#container').highcharts();
+        var series = chart.series;
+        for(i=0; i < chart.series.length; i++) {
+           doSetTimeout(chart, i);
+        }
+        chart.redraw();
+});
+
+function doSetTimeout( chart, i) {
+      setTimeout(function add() {chart.series[i].setVisible(true, true); if ( i > 10 ) chart.series[i-10].setVisible(false, false);}, i*1000); 
+
+}
+</script>
+</body>
+</html>
