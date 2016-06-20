@@ -77,15 +77,13 @@ $('#animate').click(function(){
         var chart = $('#container').highcharts();
         var series = chart.series;
         for(i=0; i < chart.series.length; i++) {
-           // series[i].setVisible(false, false);
-            //doSetTimeout(series, i); 
            doSetTimeout(chart, i);
         }
         chart.redraw();
 });
 
 function doSetTimeout( chart, i) {
-      setTimeout(function add() {chart.series[i].setVisible(true, true); }, i*200); 
+      setTimeout(function add() {chart.series[i].setVisible(true, true); if ( i > 10 ) chart.series[i-10].setVisible(false, false);}, i*1000); 
 
 }
 </script>
